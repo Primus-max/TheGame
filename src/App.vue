@@ -8,6 +8,9 @@ import { ref } from 'vue';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
+const gifCorrect = '/public/dog-puppy.gif';
+const gifIncorrect = ['/public/dog-puppy.gif', '/public/dog-puppy.gif', '/public/dog-puppy.gif'];
+
 const questions = ref([
   {
     question: 'HbA1c 10% çox olanda Diabeton MR neçə faiz HbA1c azaldacaq?',
@@ -17,8 +20,8 @@ const questions = ref([
       { text: '1.2%', correct: false },
       { text: '2.5%', correct: false }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'HbA1c 4.3% azalması, hansı dozada nail olunur?\n2TŞD xəstəsi\nYaş = 61, HbA1c = 8.3%, Çəki = 83 kq, BÇİ = 31kq/m2.',
@@ -28,8 +31,7 @@ const questions = ref([
       { text: '90 mq', correct: false },
       { text: '120 mq', correct: true }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'Sizcə metforminlə kombinasiyada HbA1c neçə % qlimeperid və neçə % Diabeton MR endirəcək?',
@@ -39,8 +41,8 @@ const questions = ref([
       { text: 'Glimepirid – 1.2%; Diabeton MR – 1.7%', correct: false },
       { text: 'Glimepirid – 2.1%; Diabeton MR – 0.9%', correct: false }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'Diabeton MR böyrəklərə necə təsir edir?',
@@ -50,8 +52,8 @@ const questions = ref([
       { text: 'E', correct: false },
       { text: 'A, B və C', correct: true }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'Qliklazid 60mq MR və qliklazid 80mq:',
@@ -61,8 +63,8 @@ const questions = ref([
       { text: 'C', correct: false },
       { text: 'D', correct: false }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'Diabeton MR gözlərə təsiri',
@@ -72,8 +74,8 @@ const questions = ref([
       { text: 'Proliferativ retinipatiyanın riskini azaldır', correct: true },
       { text: 'Başqa sulfanil sidik cövhəri dərmanlar kimi təsir göstərir', correct: false }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   },
   {
     question: 'Hipoqlikemiya riski hansı dərmanda daha azdır?',
@@ -83,12 +85,13 @@ const questions = ref([
       { text: 'DDP-4 inhibitorları', correct: false },
       { text: 'Diabeton MR və DPP4 -inhibitorları', correct: false }
     ],
-    gifCorrect: '/public/true.gif',
-    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+    gifCorrect: gifCorrect,
+    gifIncorrect: gifIncorrect
   }
 ]);
 
 const currentQuestionIndex = ref(0);
+const currentQuestion = ref(questions.value[currentQuestionIndex.value]);
 const showGif = ref(false);
 const selectedGif = ref('');
 const isDarkTheme = ref(false);
@@ -96,13 +99,12 @@ const isCorrect = ref(true);
 const checkingAnswer = ref(false);
 
 function selectAnswer(option) {
-  console.log('Answer selected, checking answer...');
   checkingAnswer.value = true;
+  console.log('Checking answer for question index:', currentQuestionIndex.value);
   setTimeout(() => {
     if (option.correct) {
       selectedGif.value = questions.value[currentQuestionIndex.value].gifCorrect;
       isCorrect.value = true;
-      currentQuestionIndex.value++;
     } else {
       const randomIndex = Math.floor(Math.random() * questions.value[currentQuestionIndex.value].gifIncorrect.length);
       selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect[randomIndex];
@@ -110,13 +112,16 @@ function selectAnswer(option) {
     }
     showGif.value = true;
     checkingAnswer.value = false;
-    console.log('Answer checked, result:', isCorrect.value);
+    console.log('Answer checked, result:', isCorrect.value, 'Next question index:', currentQuestionIndex.value);
   }, 1500);
 }
 
 function nextQuestion() {
   showGif.value = false;
-  console.log('Moving to next question, resetting states.');
+  console.log('Moving to next question, resetting states. Current index:', currentQuestionIndex.value);
+  if (isCorrect.value) {
+    currentQuestionIndex.value++;
+  }
   if (currentQuestionIndex.value >= questions.value.length) {
     alert('Oyunu bitirdiniz! Təşəkkürlər!');
     currentQuestionIndex.value = 0; // Сбросить игру
@@ -143,11 +148,11 @@ function toggleTheme() {
     <div :class="{ 'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme }" class="game-box">
       <div class="header"></div>
       <div class="content">
-        <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
+        <h1 class="question">{{ (currentQuestionIndex + 1) + ' ' + questions[currentQuestionIndex]?.question }}</h1>
         <div v-if="checkingAnswer" class="loading-bar"></div>
         <div class="options-container">
           <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
-            <Button :label="option.text" :icon="option.correct && isCorrect ? 'pi pi-check-circle' : ''"
+            <Button :label="option.text" :icon="option.correct ? 'pi pi-check-circle' : ''"
               class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
           </div>
         </div>
