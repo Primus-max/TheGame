@@ -11,6 +11,7 @@ import {
 //import emailjs from 'emailjs-com';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
 
 import emailjs from '@emailjs/browser';
 
@@ -206,7 +207,7 @@ onMounted(() => {
     <div v-if="!userName" class="name-modal">
       <div class="modal-content">
         <h2>Добро пожаловать! Пожалуйста, введите ваше имя:</h2>
-        <input v-model="userNameInput" placeholder="Ваше имя" />
+        <InputText v-model="userNameInput" placeholder="Ваше имя" class="input-text" />
         <Button @click="saveUserName" label="Сохранить" class="save-button" />
       </div>
     </div>
@@ -389,6 +390,9 @@ onMounted(() => {
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @keyframes slideIn {
@@ -399,6 +403,16 @@ onMounted(() => {
   to {
     transform: translateY(0);
   }
+}
+
+.input-text {
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.save-button {
+  margin-top: 10px;
 }
 
 .name-modal {
@@ -412,9 +426,5 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.5s ease-in-out;
-}
-
-.save-button {
-  margin-top: 10px;
 }
 </style>
