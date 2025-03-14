@@ -109,9 +109,14 @@ const userName = ref(localStorage.getItem('userName') || '');
 const userNameInput = ref('');
 const userAnswers = ref(JSON.parse(localStorage.getItem('userAnswers')) || []);
 
+
 function selectAnswer(option) {
   selectedOption.value = option;
-  userAnswers.value.push({ question: questions.value[currentQuestionIndex.value].question, answer: option.text });
+  userAnswers.value.push({
+    question: questions.value[currentQuestionIndex.value].question,
+    answer: option.text,
+    isCorrect: option.correct,
+  })  
   localStorage.setItem('userAnswers', JSON.stringify(userAnswers.value));
   checkingAnswer.value = true;
   setTimeout(() => {
@@ -131,10 +136,10 @@ function selectAnswer(option) {
 }
 
 function sendEmail() {
+  const formattedAnswers = formatUserAnswers();
   var templateParams = {
     name: userName.value,
-    notes: 'sdfasdfasdfasdfasdf',
-    hasData: true
+    message: formattedAnswers,
   };
 
   emailjs.send(serviceId, templateId, templateParams, { publicKey: userId }).then(
@@ -147,8 +152,14 @@ function sendEmail() {
   );
 }
 
-function nextQuestion() {
-  sendEmail();
+function formatUserAnswers() {
+  return userAnswers.value.map((answer, index) => {
+    return `Вопрос: ${answer.question}\nОтвет: ${answer.answer}\n`;
+  }).join('\n');
+}
+
+
+function nextQuestion() {  
   showGif.value = false;
   if (isCorrect.value) {
     currentQuestionIndex.value++;
@@ -157,6 +168,8 @@ function nextQuestion() {
     alert('Oyunu bitirdiniz! Təşəkkürlər!');
     sendEmail();
     currentQuestionIndex.value = 0;
+    userAnswers.value = [];
+    localStorage.removeItem('userAnswers');
   }
   checkingAnswer.value = false;
   isCorrect.value = false;
@@ -182,8 +195,8 @@ onMounted(() => {
   }
 
   emailjs.init({
-    publicKey: "ORktbYeHoFd9bF-0b",    
-    blockHeadless: true,    
+    publicKey: "ORktbYeHoFd9bF-0b",
+    blockHeadless: true,
   });
 });
 </script>
