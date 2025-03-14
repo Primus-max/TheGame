@@ -3,14 +3,22 @@ import 'primevue/resources/themes/saga-blue/theme.css'; // Светлая тем
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 
-import { ref } from 'vue';
+import {
+  onMounted,
+  ref,
+} from 'vue';
 
+//import emailjs from 'emailjs-com';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
+import emailjs from '@emailjs/browser';
+
 const gifCorrect = '/public/dog-puppy.gif';
 const gifIncorrect = ['/public/dog-puppy.gif', '/public/dog-puppy.gif', '/public/dog-puppy.gif'];
-
+const serviceId = 'service_fvbb5w9';
+const templateId = 'template_nj0ch0b';
+const userId = 'ORktbYeHoFd9bF-0b';
 const questions = ref([
   {
     question: 'HbA1c 10% çox olanda Diabeton MR neçə faiz HbA1c azaldacaq?',
@@ -97,9 +105,14 @@ const isDarkTheme = ref(false);
 const isCorrect = ref(true);
 const checkingAnswer = ref(false);
 const selectedOption = ref(null);
+const userName = ref(localStorage.getItem('userName') || '');
+const userNameInput = ref('');
+const userAnswers = ref(JSON.parse(localStorage.getItem('userAnswers')) || []);
 
 function selectAnswer(option) {
   selectedOption.value = option;
+  userAnswers.value.push({ question: questions.value[currentQuestionIndex.value].question, answer: option.text });
+  localStorage.setItem('userAnswers', JSON.stringify(userAnswers.value));
   checkingAnswer.value = true;
   setTimeout(() => {
     if (currentQuestionIndex.value < questions.value.length) {
@@ -114,20 +127,38 @@ function selectAnswer(option) {
       showGif.value = true;
     }
     checkingAnswer.value = false;
-  }, 500);
+  }, 300);
+}
+
+function sendEmail() {
+  var templateParams = {
+    name: userName.value,
+    notes: 'sdfasdfasdfasdfasdf',
+    hasData: true
+  };
+
+  emailjs.send(serviceId, templateId, templateParams, { publicKey: userId }).then(
+    (response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    },
+    (error) => {
+      console.log('FAILED...', error);
+    },
+  );
 }
 
 function nextQuestion() {
+  sendEmail();
   showGif.value = false;
-  console.log('Moving to next question, resetting states. Current index:', currentQuestionIndex.value);
   if (isCorrect.value) {
     currentQuestionIndex.value++;
   }
   if (currentQuestionIndex.value >= questions.value.length) {
     alert('Oyunu bitirdiniz! Təşəkkürlər!');
-    currentQuestionIndex.value = 0; // Сбросить игру
+    sendEmail();
+    currentQuestionIndex.value = 0;
   }
-  checkingAnswer.value = false; // Сброс состояния
+  checkingAnswer.value = false;
   isCorrect.value = false;
 }
 
@@ -139,29 +170,56 @@ function toggleTheme() {
   }
   document.body.style.backgroundColor = isDarkTheme.value ? '#2c3e50' : '#f4f4f9';
 }
+
+function saveUserName() {
+  userName.value = userNameInput.value;
+  localStorage.setItem('userName', userName.value);
+}
+
+onMounted(() => {
+  if (!userName.value) {
+    userNameInput.value = '';
+  }
+
+  emailjs.init({
+    publicKey: "ORktbYeHoFd9bF-0b",    
+    blockHeadless: true,    
+  });
+});
 </script>
 
 <template>
   <div class="app-container">
-    <Button @click="toggleTheme" class="theme-toggle"
-      :class="{ 'light-theme': !isDarkTheme, 'dark-theme': isDarkTheme }">
-      <i :class="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'" style="margin-right: 8px;"></i>
-    </Button>
-    <div :class="{ 'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme }" class="game-box">
-      <div class="header"></div>
-      <div class="content">
-        <h1 class="question">{{ (currentQuestionIndex + 1) + ' ' + questions[currentQuestionIndex]?.question }}</h1>
-        <div v-if="checkingAnswer" class="loading-bar"></div>
-        <div class="options-container">
-          <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
-            <Button :label="option.text" :icon="selectedOption === option && isCorrect ? 'pi pi-check-circle' : ''"
-              class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
+    <div v-if="!userName" class="name-modal">
+      <div class="modal-content">
+        <h2>Добро пожаловать! Пожалуйста, введите ваше имя:</h2>
+        <input v-model="userNameInput" placeholder="Ваше имя" />
+        <Button @click="saveUserName" label="Сохранить" class="save-button" />
+      </div>
+    </div>
+    <div v-else>
+      <Button @click="toggleTheme" class="theme-toggle"
+        :class="{ 'light-theme': !isDarkTheme, 'dark-theme': isDarkTheme }">
+        <i :class="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'" style="margin-right: 8px;"></i>
+      </Button>
+      <div :class="{ 'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme }" class="game-box">
+        <div class="header">
+          <h3>Привет, {{ userName }}!</h3>
+        </div>
+        <div class="content">
+          <h1 class="question">{{ (currentQuestionIndex + 1) + ' ' + questions[currentQuestionIndex]?.question }}</h1>
+          <div v-if="checkingAnswer" class="loading-bar"></div>
+          <div class="options-container">
+            <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
+              <Button :label="option.text" :icon="selectedOption === option && isCorrect ? 'pi pi-check-circle' : ''"
+                class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
+            </div>
           </div>
         </div>
-      </div>
-      <div v-if="showGif" class="custom-modal">
-        <div class="modal-content">
-          <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
+        <div v-if="showGif" class="custom-modal">
+          <div class="modal-content">
+            <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
+          </div>
         </div>
       </div>
     </div>
@@ -324,8 +382,26 @@ function toggleTheme() {
   from {
     transform: translateY(-20%);
   }
+
   to {
     transform: translateY(0);
   }
+}
+
+.name-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.save-button {
+  margin-top: 10px;
 }
 </style>
