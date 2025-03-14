@@ -91,7 +91,6 @@ const questions = ref([
 ]);
 
 const currentQuestionIndex = ref(0);
-const currentQuestion = ref(questions.value[currentQuestionIndex.value]);
 const showGif = ref(false);
 const selectedGif = ref('');
 const isDarkTheme = ref(false);
@@ -102,18 +101,23 @@ function selectAnswer(option) {
   checkingAnswer.value = true;
   console.log('Checking answer for question index:', currentQuestionIndex.value);
   setTimeout(() => {
-    if (option.correct) {
-      selectedGif.value = questions.value[currentQuestionIndex.value].gifCorrect;
-      isCorrect.value = true;
+    if (currentQuestionIndex.value < questions.value.length) {
+      if (option.correct) {
+        selectedGif.value = questions.value[0].gifCorrect;
+        isCorrect.value = true;
+      } else {
+        const randomIndex = Math.floor(Math.random() * questions.value[currentQuestionIndex.value].gifIncorrect.length);
+        selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect[randomIndex];
+        isCorrect.value = false;
+      }
+      console.log('Selected GIF:', selectedGif.value);
+      showGif.value = true;
     } else {
-      const randomIndex = Math.floor(Math.random() * questions.value[currentQuestionIndex.value].gifIncorrect.length);
-      selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect[randomIndex];
-      isCorrect.value = false;
+      console.error('Index out of bounds:', currentQuestionIndex.value);
     }
-    showGif.value = true;
     checkingAnswer.value = false;
     console.log('Answer checked, result:', isCorrect.value, 'Next question index:', currentQuestionIndex.value);
-  }, 1500);
+  }, 700);  
 }
 
 function nextQuestion() {
