@@ -17,33 +17,111 @@ const questions = ref([
       { text: '1.2%', correct: false },
       { text: '2.5%', correct: false }
     ],
-    gifCorrect: 'path_to_correct_gif',
-    gifIncorrect: 'path_to_incorrect_gif'
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
   },
-  // Добавьте остальные вопросы здесь
+  {
+    question: 'HbA1c 4.3% azalması, hansı dozada nail olunur?\n2TŞD xəstəsi\nYaş = 61, HbA1c = 8.3%, Çəki = 83 kq, BÇİ = 31kq/m2.',
+    options: [
+      { text: '30 mq', correct: false },
+      { text: '60 mq', correct: false },
+      { text: '90 mq', correct: false },
+      { text: '120 mq', correct: true }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  },
+  {
+    question: 'Sizcə metforminlə kombinasiyada HbA1c neçə % qlimeperid və neçə % Diabeton MR endirəcək?',
+    options: [
+      { text: 'Glimepirid – 1.9%; Diabeton MR – 1%', correct: false },
+      { text: 'Glimepirid – 0.9%; Diabeton MR – 1%', correct: true },
+      { text: 'Glimepirid – 1.2%; Diabeton MR – 1.7%', correct: false },
+      { text: 'Glimepirid – 2.1%; Diabeton MR – 0.9%', correct: false }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  },
+  {
+    question: 'Diabeton MR böyrəklərə necə təsir edir?',
+    options: [
+      { text: 'A və B', correct: false },
+      { text: 'D', correct: false },
+      { text: 'E', correct: false },
+      { text: 'A, B və C', correct: true }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  },
+  {
+    question: 'Qliklazid 60mq MR və qliklazid 80mq:',
+    options: [
+      { text: 'A və B', correct: false },
+      { text: 'B və C', correct: true },
+      { text: 'C', correct: false },
+      { text: 'D', correct: false }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  },
+  {
+    question: 'Diabeton MR gözlərə təsiri',
+    options: [
+      { text: 'Gözlərin zədələnmə riskini artırır', correct: false },
+      { text: 'Gözlərə qarşı neytral təsir göstərir', correct: false },
+      { text: 'Proliferativ retinipatiyanın riskini azaldır', correct: true },
+      { text: 'Başqa sulfanil sidik cövhəri dərmanlar kimi təsir göstərir', correct: false }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  },
+  {
+    question: 'Hipoqlikemiya riski hansı dərmanda daha azdır?',
+    options: [
+      { text: 'Diabeton MR', correct: true },
+      { text: 'Glimepirid', correct: false },
+      { text: 'DDP-4 inhibitorları', correct: false },
+      { text: 'Diabeton MR və DPP4 -inhibitorları', correct: false }
+    ],
+    gifCorrect: '/public/true.gif',
+    gifIncorrect: ['/public/false-1.gif', '/public/false-2.gif', '/public/false-3.gif']
+  }
 ]);
 
 const currentQuestionIndex = ref(0);
 const showGif = ref(false);
 const selectedGif = ref('');
 const isDarkTheme = ref(false);
+const isCorrect = ref(true);
+const checkingAnswer = ref(false);
 
 function selectAnswer(option) {
-  // if (option.correct) {
-  //   selectedGif.value = questions.value[currentQuestionIndex.value].gifCorrect;
-  //   currentQuestionIndex.value++;
-  // } else {
-  //   selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect;
-  // }
-  // showGif.value = true;
+  console.log('Answer selected, checking answer...');
+  checkingAnswer.value = true;
+  setTimeout(() => {
+    if (option.correct) {
+      selectedGif.value = questions.value[currentQuestionIndex.value].gifCorrect;
+      isCorrect.value = true;
+      currentQuestionIndex.value++;
+    } else {
+      const randomIndex = Math.floor(Math.random() * questions.value[currentQuestionIndex.value].gifIncorrect.length);
+      selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect[randomIndex];
+      isCorrect.value = false;
+    }
+    showGif.value = true;
+    checkingAnswer.value = false;
+    console.log('Answer checked, result:', isCorrect.value);
+  }, 1500);
 }
 
 function nextQuestion() {
   showGif.value = false;
+  console.log('Moving to next question, resetting states.');
   if (currentQuestionIndex.value >= questions.value.length) {
     alert('Oyunu bitirdiniz! Təşəkkürlər!');
     currentQuestionIndex.value = 0; // Сбросить игру
   }
+  checkingAnswer.value = false; // Сброс состояния
 }
 
 function toggleTheme() {
@@ -66,14 +144,16 @@ function toggleTheme() {
       <div class="header"></div>
       <div class="content">
         <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
+        <div v-if="checkingAnswer" class="loading-bar"></div>
         <div class="options-container">
           <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
-            <Button :label="option.text" variant="outlined" @click="selectAnswer(option)" />
+            <Button :label="option.text" :icon="option.correct && isCorrect ? 'pi pi-check-circle' : ''"
+              class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
           </div>
         </div>
       </div>
       <Dialog v-if="showGif" :visible.sync="showGif" modal>
-        <img :src="selectedGif" @click="nextQuestion" class="gif-image" />
+        <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
       </Dialog>
     </div>
   </div>
@@ -138,16 +218,34 @@ function toggleTheme() {
   margin-bottom: 20px;
 }
 
+.loading-bar {
+  width: 100%;
+  height: 5px;
+  background-color: #007bff;
+  margin-bottom: 10px;
+  animation: loading 1.5s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
 .options-container {
   width: 100%;
   padding: 0 10%;
-  margin-top: 10%; 
+  margin-top: 10%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
-.option-button {  
+.option-button {
   margin: 10px 0;
 }
 
@@ -155,9 +253,6 @@ function toggleTheme() {
   width: 100%;
   padding: 15px;
   font-size: 1.2em;
-  background-color: #007bff;
-  color: white;
-  border: none;
   transition: background-color 0.3s ease;
 }
 
