@@ -96,10 +96,11 @@ const selectedGif = ref('');
 const isDarkTheme = ref(false);
 const isCorrect = ref(true);
 const checkingAnswer = ref(false);
+const selectedOption = ref(null);
 
 function selectAnswer(option) {
+  selectedOption.value = option;
   checkingAnswer.value = true;
-  console.log('Checking answer for question index:', currentQuestionIndex.value);
   setTimeout(() => {
     if (currentQuestionIndex.value < questions.value.length) {
       if (option.correct) {
@@ -110,14 +111,10 @@ function selectAnswer(option) {
         selectedGif.value = questions.value[currentQuestionIndex.value].gifIncorrect[randomIndex];
         isCorrect.value = false;
       }
-      console.log('Selected GIF:', selectedGif.value);
       showGif.value = true;
-    } else {
-      console.error('Index out of bounds:', currentQuestionIndex.value);
     }
     checkingAnswer.value = false;
-    console.log('Answer checked, result:', isCorrect.value, 'Next question index:', currentQuestionIndex.value);
-  }, 700);  
+  }, 500);
 }
 
 function nextQuestion() {
@@ -131,6 +128,7 @@ function nextQuestion() {
     currentQuestionIndex.value = 0; // Сбросить игру
   }
   checkingAnswer.value = false; // Сброс состояния
+  isCorrect.value = false;
 }
 
 function toggleTheme() {
@@ -156,14 +154,16 @@ function toggleTheme() {
         <div v-if="checkingAnswer" class="loading-bar"></div>
         <div class="options-container">
           <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
-            <Button :label="option.text" :icon="option.correct ? 'pi pi-check-circle' : ''"
+            <Button :label="option.text" :icon="selectedOption === option && isCorrect ? 'pi pi-check-circle' : ''"
               class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
           </div>
         </div>
       </div>
-      <Dialog v-if="showGif" :visible.sync="showGif" modal>
-        <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
-      </Dialog>
+      <div v-if="showGif" class="custom-modal">
+        <div class="modal-content">
+          <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -296,6 +296,36 @@ function toggleTheme() {
 
   to {
     opacity: 1;
+  }
+}
+
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20%);
+  }
+  to {
+    transform: translateY(0);
   }
 }
 </style>
