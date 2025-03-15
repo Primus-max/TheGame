@@ -207,7 +207,7 @@ onMounted(() => {
     <div v-if="!userName" class="name-modal">
       <div class="modal-content">
         <h2>Добро пожаловать! Пожалуйста, введите ваше имя:</h2>
-        <InputText v-model="userNameInput" placeholder="Ваше имя" class="input-text" />
+        <InputText v-model="userNameInput" placeholder="Ad Soyadı" class="input-text" />
         <Button @click="saveUserName" label="Сохранить" class="save-button" />
       </div>
     </div>
