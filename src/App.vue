@@ -215,10 +215,10 @@ onMounted(() => {
       </div>
     </div>
     <div v-else>
-      <Button @click="toggleTheme" class="theme-toggle"
+      <!-- <Button @click="toggleTheme" class="theme-toggle"
         :class="{ 'light-theme': !isDarkTheme, 'dark-theme': isDarkTheme }">
         <i :class="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'" style="margin-right: 8px;"></i>
-      </Button>
+      </Button> -->
       <div :class="{ 'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme }" class="game-box">
         <div class="header">
           <!-- <h3>Привет, {{ userName }}!</h3> -->
@@ -229,7 +229,7 @@ onMounted(() => {
           <div class="options-container">
             <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
               <Button :label="option.text" :icon="selectedOption === option && isCorrect ? 'pi pi-check-circle' : ''"
-                class="p-button-outlined stretched-button" @click="selectAnswer(option)" />
+                class=" stretched-button" @click="selectAnswer(option)" />
             </div>
           </div>
         </div>
@@ -245,7 +245,7 @@ onMounted(() => {
 
 <style scoped>
 .app-container {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Arial', sans-serif;  
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
@@ -254,11 +254,11 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgb(219, 69, 1, 1);
 }
 
 .game-box {
-  height: 60vh;
-  background-color: white;
+  height: 60vh;  
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -300,6 +300,8 @@ onMounted(() => {
 .question {
   font-size: 2em;
   margin-bottom: 20px;
+  color: white;
+  font-weight: bold;  
 }
 
 .loading-bar {
@@ -354,15 +356,15 @@ onMounted(() => {
   transform: scale(1.05);
 }
 
-.dark-theme {
+/* .dark-theme {
   background-color: #2c3e50;
   color: #ecf0f1;
-}
+} */
 
-.light-theme {
+/* .light-theme {
   background-color: #f4f4f9;
   color: #2c3e50;
-}
+} */
 
 @keyframes fadeIn {
   from {
