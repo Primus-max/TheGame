@@ -210,7 +210,7 @@ onMounted(() => {
   <div class="app-container">
     <div v-if="!userName" class="name-modal">
       <div class="modal-content">
-        <h2>Salam! Sizi oyuna dəvət edirik. Zəhmət olmasa Adınızı və Soyadınızı qeyd edin.</h2>
+        <h2>Salam! Sizi oyuna dəvət edirik. Zəhmət olmasa Adınızı və Soyadınızı qeyd edin.</h2>
         <InputText v-model="userNameInput" placeholder="Ad Soyadı" class="input-text" />
         <Button @click="saveUserName" label="Saxla" class="save-button" />
       </div>
@@ -225,12 +225,15 @@ onMounted(() => {
           <!-- <h3>Привет, {{ userName }}!</h3> -->
         </div>
         <div class="content">
-          <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
+          <div class="question-container">
+            <img v-if="questions[currentQuestionIndex]?.image" :src="questions[currentQuestionIndex].image" class="question-image" />
+            <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
+          </div>
           <div v-if="checkingAnswer" class="loading-bar"></div>
           <div class="options-container">
             <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
               <Button :label="option.text" :icon="selectedOption === option && isCorrect ? 'pi pi-check-circle' : ''"
-                class=" stretched-button" @click="selectAnswer(option)" />
+                class="stretched-button" @click="selectAnswer(option)" />
             </div>
           </div>
         </div>
@@ -248,7 +251,7 @@ onMounted(() => {
 .app-container {
   font-family: 'Arial', sans-serif;  
   padding: 20px;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   text-align: center;
   display: flex;
@@ -256,14 +259,18 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   background-color: #db4501;
+  box-sizing: border-box;
 }
 
 .game-box {
-  height: 60vh;  
+  width: 100%;
+  max-width: 800px;
+  height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 .game-box:hover {
@@ -298,11 +305,25 @@ onMounted(() => {
   justify-content: center;
 }
 
+.question-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.question-image {
+  width: 100px;
+  height: auto;
+  margin-right: 20px;
+}
+
 .question {
   font-size: 3em;
-  margin-bottom: 10%;
   color: white;
-  font-weight: bold;    
+  font-weight: bold;
+  flex: 1 1 100%;
 }
 
 .loading-bar {
@@ -332,7 +353,7 @@ onMounted(() => {
 }
 
 .option-button {
-  flex: 1 1 45%;
+  flex: 1 1 calc(50% - 20px);
   margin: 10px 0;
 }
 
@@ -433,5 +454,21 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.5s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .question-image {
+    width: 80px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .question {
+    font-size: 1.5em;
+  }
+
+  .option-button {
+    flex: 1 1 100%;
+  }
 }
 </style>
