@@ -15,8 +15,11 @@ import InputText from 'primevue/inputtext';
 
 import emailjs from '@emailjs/browser';
 
-const gifCorrect = '/public/dog-puppy.gif';
-const gifIncorrect = ['/public/dog-puppy.gif', '/public/dog-puppy.gif', '/public/dog-puppy.gif'];
+const gifCorrect = '/TheGame/true.gif';
+const gifIncorrect = [
+  '/TheGame/false-1.gif',
+  '/TheGame/false-2.gif',
+];
 const serviceId = 'service_fvbb5w9';
 const templateId = 'template_nj0ch0b';
 const userId = 'ORktbYeHoFd9bF-0b';
@@ -117,7 +120,7 @@ function selectAnswer(option) {
     question: questions.value[currentQuestionIndex.value].question,
     answer: option.text,
     isCorrect: option.correct,
-  })  
+  })
   localStorage.setItem('userAnswers', JSON.stringify(userAnswers.value));
   checkingAnswer.value = true;
   setTimeout(() => {
@@ -160,7 +163,7 @@ function formatUserAnswers() {
 }
 
 
-function nextQuestion() {  
+function nextQuestion() {
   showGif.value = false;
   if (isCorrect.value) {
     currentQuestionIndex.value++;
@@ -218,7 +221,7 @@ onMounted(() => {
       </Button>
       <div :class="{ 'dark-theme': isDarkTheme, 'light-theme': !isDarkTheme }" class="game-box">
         <div class="header">
-          <h3>Привет, {{ userName }}!</h3>
+          <!-- <h3>Привет, {{ userName }}!</h3> -->
         </div>
         <div class="content">
           <h1 class="question">{{ (currentQuestionIndex + 1) + ' ' + questions[currentQuestionIndex]?.question }}</h1>
