@@ -53,6 +53,7 @@ const questions = ref([
       { text: 'Glimepirid – 1.2%; Diabeton MR – 1.7%', correct: false },
       { text: 'Glimepirid – 2.1%; Diabeton MR – 0.9%', correct: false }
     ],
+    image: '/TheGame/chel.png',
     gifCorrect: gifCorrect,
     gifIncorrect: gifIncorrect
   },
@@ -224,7 +225,7 @@ onMounted(() => {
           <!-- <h3>Привет, {{ userName }}!</h3> -->
         </div>
         <div class="content">
-          <h1 class="question">{{ (currentQuestionIndex + 1) + ' ' + questions[currentQuestionIndex]?.question }}</h1>
+          <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
           <div v-if="checkingAnswer" class="loading-bar"></div>
           <div class="options-container">
             <div v-for="option in questions[currentQuestionIndex]?.options" :key="option.text" class="option-button">
@@ -254,7 +255,7 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(219, 69, 1, 1);
+  background-color: #db4501;
 }
 
 .game-box {
@@ -298,10 +299,10 @@ onMounted(() => {
 }
 
 .question {
-  font-size: 2em;
-  margin-bottom: 20px;
+  font-size: 3em;
+  margin-bottom: 10%;
   color: white;
-  font-weight: bold;  
+  font-weight: bold;    
 }
 
 .loading-bar {
@@ -324,14 +325,14 @@ onMounted(() => {
 
 .options-container {
   width: 100%;
-  padding: 0 10%;
-  margin-top: 10%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
 }
 
 .option-button {
+  flex: 1 1 45%;
   margin: 10px 0;
 }
 
@@ -340,6 +341,7 @@ onMounted(() => {
   padding: 15px;
   font-size: 1.2em;
   transition: background-color 0.3s ease;
+  white-space: normal;
 }
 
 .stretched-button:hover {
