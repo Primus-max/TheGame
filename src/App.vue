@@ -19,6 +19,7 @@ const gifCorrect = '/TheGame/true.gif';
 const gifIncorrect = [
   '/TheGame/false-1.gif',
   '/TheGame/false-2.gif',
+  '/TheGame/false-3.gif',
 ];
 const serviceId = 'service_fvbb5w9';
 const templateId = 'template_nj0ch0b';
