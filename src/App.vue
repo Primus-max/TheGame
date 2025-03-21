@@ -37,7 +37,7 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
-    question: 'HbA1c 4.3% azalması, hansı dozada nail olunur?\n2TŞD xəstəsi\nYaş = 61, HbA1c = 8.3%, Çəki = 83 kq, BÇİ = 31kq/m2.',
+    question: 'HbA1c 4.3% azalması, hansı dozada nail olunur?',
     options: [
       { text: '30 mq', correct: false },
       { text: '60 mq', correct: false },
