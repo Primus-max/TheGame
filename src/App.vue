@@ -47,6 +47,7 @@ const questions = ref([
   },
   {
     question: 'Sizcə metforminlə kombinasiyada HbA1c neçə % qlimeperid və neçə % Diabeton MR endirəcək?',
+    patientInfo: '2TŞD xəstəsi\nYaş = 61, \nHbA1c = 8.3%, \nÇəki = 83 kq, \nBÇİ = 31kq/m2.',
     options: [
       { text: 'Glimepirid – 1.9%; Diabeton MR – 1%', correct: false },
       { text: 'Glimepirid – 0.9%; Diabeton MR – 1%', correct: true },
@@ -226,7 +227,12 @@ onMounted(() => {
         </div>
         <div class="content">
           <div class="question-container">
-            <img v-if="questions[currentQuestionIndex]?.image" :src="questions[currentQuestionIndex].image" class="question-image" />
+            <div v-if="questions[currentQuestionIndex]?.image" class="patient-info-wrapper">
+              <img :src="questions[currentQuestionIndex].image" class="question-image" />
+              <div v-if="questions[currentQuestionIndex]?.patientInfo" class="patient-info">
+                {{ questions[currentQuestionIndex].patientInfo }}
+              </div>
+            </div>
             <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
           </div>
           <div v-if="checkingAnswer" class="loading-bar"></div>
@@ -314,7 +320,7 @@ onMounted(() => {
 }
 
 .question-image {
-  width: 100px;
+  width: 20%;
   height: auto;
   margin-right: 20px;
 }
@@ -456,7 +462,32 @@ onMounted(() => {
   animation: fadeIn 0.5s ease-in-out;
 }
 
+.patient-info-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  /* margin-bottom: 20px; */
+}
+
+.patient-info {  
+  color: white;
+  text-align: left;
+  white-space: pre-line;
+  font-size: 1.1em;
+  line-height: 1.5;
+}
+
 @media (max-width: 768px) {
+  .patient-info-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .patient-info {
+    text-align: center;
+  }
+
   .question-image {
     width: 80px;
     margin-right: 0;
