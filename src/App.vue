@@ -26,6 +26,7 @@ const templateId = 'template_nj0ch0b';
 const userId = 'ORktbYeHoFd9bF-0b';
 const questions = ref([
   {
+    id: 1,
     question: 'HbA1c 10% çox olanda Diabeton MR neçə faiz HbA1c azaldacaq?',
     options: [
       { text: '4.3%', correct: true },
@@ -37,6 +38,7 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
+    id: 2,
     question: 'HbA1c 4.3% azalması, hansı dozada nail olunur?',
     options: [
       { text: '30 mq', correct: false },
@@ -47,8 +49,9 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
+    id: 3,
     question: 'Sizcə metforminlə kombinasiyada HbA1c neçə % qlimeperid və neçə % Diabeton MR endirəcək?',
-    patientInfo: '2TŞD xəstəsi\nYaş = 61, \nHbA1c = 8.3%, \nÇəki = 83 kq, \nBÇİ = 31kq/m2.',
+    description: '2TŞD xəstəsi\nYaş = 61, \nHbA1c = 8.3%, \nÇəki = 83 kq, \nBÇİ = 31kq/m2.',
     options: [
       { text: 'Glimepirid – 1.9%; Diabeton MR – 1%', correct: false },
       { text: 'Glimepirid – 0.9%; Diabeton MR – 1%', correct: true },
@@ -60,7 +63,9 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
+    id: 4,
     question: 'Diabeton MR böyrəklərə necə təsir edir?',
+    description: 'A. Makroalbuminuriya riskini azaldır\nB. Nefropatiyanın yaranma ya da proqresləşmə riskini azaldır\nC. BÇTM riskini azaldır\nD. Böyrəklərə qarşı təsiri neytraldır\nE. Böyrəklərin zədələnmə riskini artırır',
     options: [
       { text: 'A və B', correct: false },
       { text: 'D', correct: false },
@@ -71,7 +76,9 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
+    id: 5,
     question: 'Qliklazid 60mq MR və qliklazid 80mq:',
+    description: 'A. Fərqlənmir\nB. 60mq MR gündə 1 dəfə 80mq isə gündə 2 dəfə\nC. 60mq MR daha effektivdir\nD. 80 mq daha effektivdir',
     options: [
       { text: 'A və B', correct: false },
       { text: 'B və C', correct: true },
@@ -82,17 +89,20 @@ const questions = ref([
     gifIncorrect: gifIncorrect
   },
   {
+    id: 6,
     question: 'Diabeton MR gözlərə təsiri',
+    description: 'A. Gözlərin zədələnmə riskini artırır\nB. Gözlərə qarşı neytral təsir göstərir\nC. Proliferativ retinipatiyanın riskini azaldır\nD. Başqa sulfanil sidik cövhəri dərmanlar kimi təsir göstərir',
     options: [
-      { text: 'Gözlərin zədələnmə riskini artırır', correct: false },
-      { text: 'Gözlərə qarşı neytral təsir göstərir', correct: false },
-      { text: 'Proliferativ retinipatiyanın riskini azaldır', correct: true },
-      { text: 'Başqa sulfanil sidik cövhəri dərmanlar kimi təsir göstərir', correct: false }
+      { text: 'A', correct: false },
+      { text: 'B', correct: false },
+      { text: 'C', correct: true },
+      { text: 'D', correct: false }
     ],
     gifCorrect: gifCorrect,
     gifIncorrect: gifIncorrect
   },
   {
+    id: 7,
     question: 'Hipoqlikemiya riski hansı dərmanda daha azdır?',
     options: [
       { text: 'Diabeton MR', correct: true },
@@ -228,13 +238,22 @@ onMounted(() => {
         </div>
         <div class="content">
           <div class="question-container">
-            <div v-if="questions[currentQuestionIndex]?.image" class="patient-info-wrapper">
-              <img :src="questions[currentQuestionIndex].image" class="question-image" />
-              <div v-if="questions[currentQuestionIndex]?.patientInfo" class="patient-info">
-                {{ questions[currentQuestionIndex].patientInfo }}
+            <div v-if="questions[currentQuestionIndex]?.image || questions[currentQuestionIndex]?.description"
+              class="patient-info-wrapper">
+              <img v-if="questions[currentQuestionIndex]?.image" :src="questions[currentQuestionIndex].image"
+                class="question-image" />
+              <div v-if="questions[currentQuestionIndex]?.description && questions[currentQuestionIndex]?.id === 3"
+                class="patient-info">
+                {{ questions[currentQuestionIndex].description }}
               </div>
             </div>
             <h1 class="question">{{ questions[currentQuestionIndex]?.question }}</h1>
+            <div v-if="questions[currentQuestionIndex]?.description && questions[currentQuestionIndex]?.id !== 3"
+              style="display: flex; width: 100%; justify-content: flex-start; align-items:flex-start;">
+              <div class="patient-info">
+                {{ questions[currentQuestionIndex].description }}
+              </div>
+            </div>
           </div>
           <div v-if="checkingAnswer" class="loading-bar"></div>
           <div class="options-container">
@@ -256,7 +275,7 @@ onMounted(() => {
 
 <style scoped>
 .app-container {
-  font-family: 'Arial', sans-serif;  
+  font-family: 'Arial', sans-serif;
   padding: 20px;
   max-width: 100%;
   margin: 0 auto;
@@ -471,7 +490,7 @@ onMounted(() => {
   /* margin-bottom: 20px; */
 }
 
-.patient-info {  
+.patient-info {
   color: white;
   text-align: left;
   white-space: pre-line;
