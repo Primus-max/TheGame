@@ -125,7 +125,7 @@ const selectedOption = ref(null);
 const userName = ref(localStorage.getItem('userName') || '');
 const userNameInput = ref('');
 const userAnswers = ref(JSON.parse(localStorage.getItem('userAnswers')) || []);
-
+const showEndModal = ref(false);
 
 function selectAnswer(option) {
   selectedOption.value = option;
@@ -175,21 +175,24 @@ function formatUserAnswers() {
   }).join('\n');
 }
 
-
 function nextQuestion() {
   showGif.value = false;
   if (isCorrect.value) {
     currentQuestionIndex.value++;
   }
   if (currentQuestionIndex.value >= questions.value.length) {
-    alert('Oyunu bitirdiniz! Təşəkkürlər!');
+    showEndModal.value = true;
     sendEmail();
-    currentQuestionIndex.value = 0;
-    userAnswers.value = [];
-    localStorage.removeItem('userAnswers');
   }
   checkingAnswer.value = false;
   isCorrect.value = false;
+}
+
+function resetGame() {
+  showEndModal.value = false;
+  currentQuestionIndex.value = 0;
+  userAnswers.value = [];
+  localStorage.removeItem('userAnswers');
 }
 
 function toggleTheme() {
@@ -206,7 +209,7 @@ function saveUserName() {
   localStorage.setItem('userName', userName.value);
 }
 
-onMounted(() => {
+onMounted(() => {  
   if (!userName.value) {
     userNameInput.value = '';
   }
@@ -263,11 +266,18 @@ onMounted(() => {
             </div>
           </div>
         </div>
+        
         <div v-if="showGif" class="custom-modal">
           <div class="modal-content">
             <img :src="selectedGif" @click="nextQuestion" class="gif-image" style="width: 100%; height: auto;" />
           </div>
         </div>
+      </div>
+    </div>
+    <div v-if="showEndModal" class="custom-modal">
+      <div class="modal-content">       
+        <img src="/TheGame/fireworks-putukan.gif" alt="Fireworks" class="fireworks-gif">
+        <h1>Oyunu bitirdiniz! Təşəkkürlər!</h1>
       </div>
     </div>
   </div>
@@ -425,38 +435,32 @@ onMounted(() => {
   }
 }
 
-.custom-modal {
+.custom-modal { 
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: #db4501;
   display: flex;
-  justify-content: center;
   align-items: center;
-  animation: fadeIn 0.5s ease-in-out;
+  justify-content: center;
+  z-index: 9999;
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.5s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(-20%);
-  }
+.modal-content h1 {
+  color: white;
+  font-size: 4em;
+  margin-bottom: 2rem;
+}
 
-  to {
-    transform: translateY(0);
-  }
+.fireworks-gif {
+  width: 100%;
+  max-width: 800px;
 }
 
 .input-text {
@@ -521,5 +525,60 @@ onMounted(() => {
   .option-button {
     flex: 1 1 100%;
   }
+}
+
+.end-game-dialog {
+  width: 80vw !important;
+  max-width: 800px !important;
+}
+
+/* Стили для маски (фона) */
+:deep(.p-dialog-mask) {
+  background: #db4501 !important;
+}
+
+/* Стили для контейнера диалога */
+:deep(.p-dialog) {
+  background: #db4501 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Стили для заголовка */
+:deep(.p-dialog-header) {
+  display: none !important;
+}
+
+/* Стили для контента */
+:deep(.p-dialog-content) {
+  background: #db4501 !important;
+  border: none !important;
+  padding: 2rem !important;
+}
+
+/* Стили для футера */
+:deep(.p-dialog-footer) {
+  display: none !important;
+  background: #db4501 !important;
+  border: none !important;
+}
+
+.end-game-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.end-game-content h1 {
+  color: white;
+  font-size: 4em;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tenor-gif-embed {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 </style>
