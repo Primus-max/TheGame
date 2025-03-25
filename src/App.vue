@@ -276,7 +276,7 @@ onMounted(() => {
     </div>
     <div v-if="showEndModal" class="custom-modal">
       <div class="modal-content">       
-        <img src="/TheGame/fireworks-putukan.gif" alt="Fireworks" class="fireworks-gif">
+        <img src="/public/fireworks-putukan.gif" alt="Fireworks" class="fireworks-gif">
         <h1>Oyunu bitirdiniz! Təşəkkürlər!</h1>
       </div>
     </div>
