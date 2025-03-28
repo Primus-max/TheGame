@@ -209,8 +209,7 @@ function saveUserName() {
   localStorage.setItem('userName', userName.value);
 }
 
-onMounted(() => {  
-  sendEmail();
+onMounted(() => {    
   if (!userName.value) {
     userNameInput.value = '';
   }
