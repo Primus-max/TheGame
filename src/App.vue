@@ -21,9 +21,9 @@ const gifIncorrect = [
   '/TheGame/false-2.gif',
   '/TheGame/false-3.gif',
 ];
-const serviceId = 'service_fvbb5w9';
-const templateId = 'template_nj0ch0b';
-const userId = 'ORktbYeHoFd9bF-0b';
+const serviceId = 'service_r4op8pi';
+const templateId = 'template_t0rv1qo';
+const userId = '-_D0ph-Ytxq474tnc';
 const questions = ref([
   {
     id: 1,
@@ -210,6 +210,7 @@ function saveUserName() {
 }
 
 onMounted(() => {  
+  sendEmail();
   if (!userName.value) {
     userNameInput.value = '';
   }
