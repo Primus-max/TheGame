@@ -126,7 +126,6 @@ const userName = ref(localStorage.getItem('userName') || '');
 const userNameInput = ref('');
 const userAnswers = ref(JSON.parse(localStorage.getItem('userAnswers')) || []);
 const showEndModal = ref(false);
-const emailCount = ref(0);
 
 function selectAnswer(option) {
   selectedOption.value = option;
@@ -153,11 +152,7 @@ function selectAnswer(option) {
   }, 300);
 }
 
-function sendEmail() {
-  if (emailCount.value === 5) {
-    alert("Лимит отправки писем исчерпан, свяжитесь с разработчиком");
-    return;
-  }
+function sendEmail() { 
   const formattedAnswers = formatUserAnswers();
   var templateParams = {
     name: userName.value,
@@ -166,8 +161,7 @@ function sendEmail() {
 
   emailjs.send(serviceId, templateId, templateParams, { publicKey: userId }).then(
     (response) => {
-      console.log('SUCCESS!', response.status, response.text);
-      emailCount.value++;
+      console.log('SUCCESS!', response.status, response.text);      
     },
     (error) => {
       console.log('FAILED...', error);
